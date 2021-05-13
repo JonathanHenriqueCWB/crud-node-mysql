@@ -8,28 +8,30 @@ app.engine('handlebars', handlebars({ defaultLayout: 'main' }))
 app.set('view engine', 'handlebars')
 
 // Configurando o body-parser
-app.use(express.urlencoded({extended: false}))
+app.use(express.urlencoded({ extended: false }))
 app.use(express.json())
 
 // Rotas
 app.get('/', function (req, res) {
-    res.render('home')
+    Cliente.findAll({ order: [['id', 'DESC']] }).then(function (pessoas) {
+        res.render('home', { pessoas: pessoas })
+    })
 })
 
-app.get('/cadastrar', function(req, res) {
+app.get('/cadastrar', function (req, res) {
     res.render('formulario')
 })
 
-app.post('/cadastrar', function(req, res) {
+app.post('/cadastrar', function (req, res) {
     Cliente.create({
         name: req.body.name,
         lastName: req.body.lastName,
         email: req.body.email,
         phone: req.body.phone
 
-    }).then(function(){
+    }).then(function () {
         res.redirect('/')
-    }).then(function(erro) {
+    }).then(function (erro) {
         res.send('Erro ao cadastrar cliente!')
     })
 })
